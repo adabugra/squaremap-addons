@@ -1,9 +1,12 @@
 package xyz.jpenilla.squaremap.addon.deathspot.task;
 
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+
+import io.papermc.paper.threadedregions.scheduler.AsyncScheduler;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.scheduler.BukkitRunnable;
+import xyz.jpenilla.squaremap.addon.common.FoliaRunnable;
 import xyz.jpenilla.squaremap.addon.deathspot.DeathSpots;
 import xyz.jpenilla.squaremap.addon.deathspot.config.DeathSpotWorldConfig;
 import xyz.jpenilla.squaremap.addon.deathspot.hook.SquaremapHook;
@@ -15,7 +18,7 @@ import xyz.jpenilla.squaremap.api.marker.Icon;
 import xyz.jpenilla.squaremap.api.marker.Marker;
 import xyz.jpenilla.squaremap.api.marker.MarkerOptions;
 
-public final class SquaremapTask extends BukkitRunnable {
+public final class SquaremapTask extends FoliaRunnable {
     private final DeathSpots plugin;
     private final SimpleLayerProvider provider;
     private final DeathSpotWorldConfig worldConfig;
@@ -23,7 +26,8 @@ public final class SquaremapTask extends BukkitRunnable {
 
     private boolean stop;
 
-    public SquaremapTask(DeathSpots plugin, MapWorld world, SimpleLayerProvider provider) {
+    public SquaremapTask(AsyncScheduler asyncScheduler, DeathSpots plugin, MapWorld world, SimpleLayerProvider provider) {
+        super(asyncScheduler, TimeUnit.MILLISECONDS);
         this.plugin = plugin;
         this.world = world;
         this.provider = provider;

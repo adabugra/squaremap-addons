@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.imageio.ImageIO;
+
+import org.bukkit.Bukkit;
 import xyz.jpenilla.squaremap.addon.essentialsx.SquaremapEssentials;
 import xyz.jpenilla.squaremap.addon.essentialsx.config.EssXWorldConfig;
 import xyz.jpenilla.squaremap.addon.essentialsx.task.SquaremapTask;
@@ -46,8 +48,8 @@ public final class SquaremapHook {
                 .defaultHidden(worldConfig.warpsControlsHidden)
                 .build();
             mapWorld.layerRegistry().register(Key.of("essentials_warps"), provider);
-            SquaremapTask task = new SquaremapTask(mapWorld, worldConfig, provider);
-            task.runTaskTimerAsynchronously(this.plugin, 0, 20L * this.plugin.config().updateInterval);
+            SquaremapTask task = new SquaremapTask(Bukkit.getAsyncScheduler(), mapWorld, worldConfig, provider);
+            task.runAtFixedRate(this.plugin, 0, 50L * this.plugin.config().updateInterval);
             this.tasks.put(mapWorld.identifier(), task);
         }
     }

@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
+
+import org.bukkit.Bukkit;
 import xyz.jpenilla.squaremap.addon.deathspot.DeathSpots;
 import xyz.jpenilla.squaremap.addon.deathspot.config.DeathSpotWorldConfig;
 import xyz.jpenilla.squaremap.addon.deathspot.task.SquaremapTask;
@@ -44,8 +46,8 @@ public final class SquaremapHook {
                 .build();
             world.layerRegistry().register(DEATH_SPOTS_LAYER_KEY, provider);
 
-            final SquaremapTask task = new SquaremapTask(plugin, world, provider);
-            task.runTaskTimerAsynchronously(plugin, 0, 20L * worldConfig.updateInterval);
+            final SquaremapTask task = new SquaremapTask(Bukkit.getAsyncScheduler(), plugin, world, provider);
+            task.runAtFixedRate(plugin, 0, 50L * worldConfig.updateInterval);
 
             this.tasks.put(world.identifier(), task);
         }

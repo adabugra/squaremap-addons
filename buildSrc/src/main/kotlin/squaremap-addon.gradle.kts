@@ -46,4 +46,5 @@ bukkitPluginYaml {
     apiVersion = "1.18"
     depend.add("squaremap")
     authors.add("jmp")
+    foliaSupported.set(true)
 }

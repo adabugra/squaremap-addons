@@ -1,12 +1,14 @@
 package xyz.jpenilla.squaremap.addon.mobs.task;
 
+import io.papermc.paper.threadedregions.scheduler.GlobalRegionScheduler;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.HeightMap;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
-import org.bukkit.scheduler.BukkitRunnable;
+import xyz.jpenilla.squaremap.addon.common.FoliaRunnable;
+import xyz.jpenilla.squaremap.addon.mobs.SquaremapMobs;
 import xyz.jpenilla.squaremap.addon.mobs.config.MobsWorldConfig;
 import xyz.jpenilla.squaremap.addon.mobs.data.Icons;
 import xyz.jpenilla.squaremap.api.BukkitAdapter;
@@ -17,14 +19,17 @@ import xyz.jpenilla.squaremap.api.marker.Icon;
 import xyz.jpenilla.squaremap.api.marker.Marker;
 import xyz.jpenilla.squaremap.api.marker.MarkerOptions;
 
-public final class SquaremapTask extends BukkitRunnable {
+public final class SquaremapTask extends FoliaRunnable {
+    private final SquaremapMobs plugin;
     private final MapWorld world;
     private final SimpleLayerProvider provider;
     private final MobsWorldConfig worldConfig;
 
     private boolean stop;
 
-    public SquaremapTask(MapWorld world, MobsWorldConfig worldConfig, SimpleLayerProvider provider) {
+    public SquaremapTask(GlobalRegionScheduler globalRegionScheduler, SquaremapMobs plugin, MapWorld world, MobsWorldConfig worldConfig, SimpleLayerProvider provider) {
+        super(globalRegionScheduler);
+        this.plugin = plugin;
         this.world = world;
         this.provider = provider;
         this.worldConfig = worldConfig;
@@ -39,18 +44,20 @@ public final class SquaremapTask extends BukkitRunnable {
         this.provider.clearMarkers();
 
         for (final Mob mob : BukkitAdapter.bukkitWorld(this.world).getEntitiesByClass(Mob.class)) {
-            final EntityType type = mob.getType();
-            if (!this.worldConfig.allowedTypes.contains(type)) {
-                continue;
-            }
-            final Location loc = mob.getLocation();
-            if (loc.getY() < this.worldConfig.minimumY) {
-                continue;
-            }
-            if (this.worldConfig.surfaceOnly && aboveSurface(loc)) {
-                continue;
-            }
-            this.handleMob(type, mob.getEntityId(), loc);
+            mob.getScheduler().run(plugin, task -> {
+                final EntityType type = mob.getType();
+                if (!this.worldConfig.allowedTypes.contains(type)) {
+                    return;
+                }
+                final Location loc = mob.getLocation();
+                if (loc.getY() < this.worldConfig.minimumY) {
+                    return;
+                }
+                if (this.worldConfig.surfaceOnly && aboveSurface(loc)) {
+                    return;
+                }
+                this.handleMob(type, mob.getEntityId(), loc);
+            }, null);
         }
     }
 

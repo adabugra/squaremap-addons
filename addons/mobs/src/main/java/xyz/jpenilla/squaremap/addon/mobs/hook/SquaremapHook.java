@@ -2,6 +2,8 @@ package xyz.jpenilla.squaremap.addon.mobs.hook;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import org.bukkit.Bukkit;
 import xyz.jpenilla.squaremap.addon.mobs.SquaremapMobs;
 import xyz.jpenilla.squaremap.addon.mobs.config.MobsWorldConfig;
 import xyz.jpenilla.squaremap.addon.mobs.task.SquaremapTask;
@@ -33,8 +35,8 @@ public final class SquaremapHook {
                 .defaultHidden(worldConfig.layerControlsHidden)
                 .build();
             mapWorld.layerRegistry().register(MOBS_LAYER_KEY, provider);
-            final SquaremapTask task = new SquaremapTask(mapWorld, worldConfig, provider);
-            task.runTaskTimer(this.plugin, 0, 20L * this.plugin.config().updateInterval);
+            final SquaremapTask task = new SquaremapTask(Bukkit.getGlobalRegionScheduler(), plugin, mapWorld, worldConfig, provider);
+            task.runAtFixedRate(this.plugin, 0, 20L * this.plugin.config().updateInterval);
             this.tasks.put(mapWorld.identifier(), task);
         }
     }

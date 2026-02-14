@@ -2,6 +2,8 @@ package xyz.jpenilla.squaremap.addon.worldguard.hook;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import xyz.jpenilla.squaremap.addon.worldguard.SquaremapWorldGuard;
@@ -42,8 +44,8 @@ public final class SquaremapHook {
                 .defaultHidden(cfg.controlHide)
                 .build();
             world.layerRegistry().register(WORLDGUARD_LAYER_KEY, provider);
-            SquaremapTask task = new SquaremapTask(this.plugin, id, provider);
-            task.runTaskTimerAsynchronously(this.plugin, 0, 20L * cfg.updateInterval);
+            SquaremapTask task = new SquaremapTask(Bukkit.getAsyncScheduler(), this.plugin, id, provider);
+            task.runAtFixedRate(this.plugin, 0, 50L * cfg.updateInterval);
             return task;
         });
     }

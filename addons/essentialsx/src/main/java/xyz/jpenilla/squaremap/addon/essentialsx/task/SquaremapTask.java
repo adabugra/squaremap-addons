@@ -2,10 +2,11 @@ package xyz.jpenilla.squaremap.addon.essentialsx.task;
 
 import com.earth2me.essentials.Warps;
 import com.earth2me.essentials.commands.WarpNotFoundException;
+import io.papermc.paper.threadedregions.scheduler.AsyncScheduler;
 import net.ess3.api.InvalidWorldException;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.scheduler.BukkitRunnable;
+import xyz.jpenilla.squaremap.addon.common.FoliaRunnable;
 import xyz.jpenilla.squaremap.addon.essentialsx.config.EssXWorldConfig;
 import xyz.jpenilla.squaremap.addon.essentialsx.hook.EssentialsHook;
 import xyz.jpenilla.squaremap.addon.essentialsx.hook.SquaremapHook;
@@ -18,14 +19,17 @@ import xyz.jpenilla.squaremap.api.marker.Icon;
 import xyz.jpenilla.squaremap.api.marker.Marker;
 import xyz.jpenilla.squaremap.api.marker.MarkerOptions;
 
-public final class SquaremapTask extends BukkitRunnable {
+import java.util.concurrent.TimeUnit;
+
+public final class SquaremapTask extends FoliaRunnable {
     private final MapWorld world;
     private final SimpleLayerProvider provider;
     private final EssXWorldConfig worldConfig;
 
     private boolean stop;
 
-    public SquaremapTask(MapWorld world, EssXWorldConfig worldConfig, SimpleLayerProvider provider) {
+    public SquaremapTask(AsyncScheduler asyncScheduler, MapWorld world, EssXWorldConfig worldConfig, SimpleLayerProvider provider) {
+        super(asyncScheduler, TimeUnit.MILLISECONDS);
         this.world = world;
         this.provider = provider;
         this.worldConfig = worldConfig;

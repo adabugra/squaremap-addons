@@ -9,10 +9,13 @@ import com.sk89q.worldguard.protection.regions.RegionType;
 import com.sk89q.worldguard.util.profile.cache.ProfileCache;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import io.papermc.paper.threadedregions.scheduler.AsyncScheduler;
 import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import xyz.jpenilla.squaremap.addon.common.FoliaRunnable;
 import xyz.jpenilla.squaremap.addon.common.config.ListMode;
 import xyz.jpenilla.squaremap.addon.worldguard.SquaremapWorldGuard;
 import xyz.jpenilla.squaremap.addon.worldguard.config.StyleSettings;
@@ -26,14 +29,15 @@ import xyz.jpenilla.squaremap.api.WorldIdentifier;
 import xyz.jpenilla.squaremap.api.marker.Marker;
 import xyz.jpenilla.squaremap.api.marker.MarkerOptions;
 
-public final class SquaremapTask extends BukkitRunnable {
+public final class SquaremapTask extends FoliaRunnable {
     private final WorldIdentifier world;
     private final SimpleLayerProvider provider;
     private final SquaremapWorldGuard plugin;
 
     private boolean stop;
 
-    public SquaremapTask(SquaremapWorldGuard plugin, WorldIdentifier world, SimpleLayerProvider provider) {
+    public SquaremapTask(AsyncScheduler asyncScheduler, SquaremapWorldGuard plugin, WorldIdentifier world, SimpleLayerProvider provider) {
+        super(asyncScheduler, TimeUnit.MILLISECONDS);
         this.plugin = plugin;
         this.world = world;
         this.provider = provider;

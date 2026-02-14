@@ -10,15 +10,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+
+import io.papermc.paper.threadedregions.scheduler.AsyncScheduler;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
-import org.bukkit.scheduler.BukkitRunnable;
 import xyz.jpenilla.squaremap.addon.claimchunk.SquaremapClaimChunk;
 import xyz.jpenilla.squaremap.addon.claimchunk.data.Claim;
 import xyz.jpenilla.squaremap.addon.claimchunk.data.Group;
 import xyz.jpenilla.squaremap.addon.claimchunk.hook.ClaimChunkHook;
 import xyz.jpenilla.squaremap.addon.claimchunk.util.RectangleMerge;
+import xyz.jpenilla.squaremap.addon.common.FoliaRunnable;
 import xyz.jpenilla.squaremap.api.BukkitAdapter;
 import xyz.jpenilla.squaremap.api.Key;
 import xyz.jpenilla.squaremap.api.MapWorld;
@@ -31,7 +34,7 @@ import xyz.jpenilla.squaremap.api.marker.Rectangle;
 
 import static xyz.jpenilla.squaremap.api.Key.key;
 
-public final class SquaremapTask extends BukkitRunnable {
+public final class SquaremapTask extends FoliaRunnable {
     private final World bukkitWorld;
     private final SimpleLayerProvider provider;
     private final SquaremapClaimChunk plugin;
@@ -39,10 +42,12 @@ public final class SquaremapTask extends BukkitRunnable {
     private boolean stop;
 
     public SquaremapTask(
+        AsyncScheduler asyncScheduler,
         final SquaremapClaimChunk plugin,
         final MapWorld world,
         final SimpleLayerProvider provider
     ) {
+        super(asyncScheduler, TimeUnit.MILLISECONDS);
         this.plugin = plugin;
         this.bukkitWorld = BukkitAdapter.bukkitWorld(world);
         this.provider = provider;

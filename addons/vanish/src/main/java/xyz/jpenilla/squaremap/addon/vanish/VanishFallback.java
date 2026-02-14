@@ -1,5 +1,6 @@
 package xyz.jpenilla.squaremap.addon.vanish;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
 import xyz.jpenilla.squaremap.api.Squaremap;
@@ -10,13 +11,15 @@ import java.util.UUID;
 public class VanishFallback implements VanishAdapter {
 
     public VanishFallback(final SquaremapVanish plugin, final Squaremap squaremap) {
-        plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
+        Bukkit.getGlobalRegionScheduler().runAtFixedRate(plugin, task -> {
             for (final Player player : plugin.getServer().getOnlinePlayers()) {
-                final boolean isVanished = isVanished(player);
-                final UUID playerId = player.getUniqueId();
-                if (isVanished != squaremap.playerManager().hidden(playerId)) {
-                    squaremap.playerManager().hidden(playerId, isVanished);
-                }
+                player.getScheduler().run(plugin, playerTask -> {
+                    final boolean isVanished = isVanished(player);
+                    final UUID playerId = player.getUniqueId();
+                    if (isVanished != squaremap.playerManager().hidden(playerId)) {
+                        squaremap.playerManager().hidden(playerId, isVanished);
+                    }
+                }, null);
             }
         }, 0, 20);
     }

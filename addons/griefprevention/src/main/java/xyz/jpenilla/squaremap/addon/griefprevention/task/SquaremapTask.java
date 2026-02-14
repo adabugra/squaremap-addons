@@ -5,12 +5,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+
+import io.papermc.paper.threadedregions.scheduler.AsyncScheduler;
 import me.ryanhamshire.GriefPrevention.Claim;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
-import org.bukkit.scheduler.BukkitRunnable;
+import xyz.jpenilla.squaremap.addon.common.FoliaRunnable;
 import xyz.jpenilla.squaremap.addon.griefprevention.SquaremapGriefPrevention;
 import xyz.jpenilla.squaremap.addon.griefprevention.hook.GPHook;
 import xyz.jpenilla.squaremap.api.BukkitAdapter;
@@ -22,14 +25,15 @@ import xyz.jpenilla.squaremap.api.marker.Marker;
 import xyz.jpenilla.squaremap.api.marker.MarkerOptions;
 import xyz.jpenilla.squaremap.api.marker.Rectangle;
 
-public final class SquaremapTask extends BukkitRunnable {
+public final class SquaremapTask extends FoliaRunnable {
     private final World bukkitWorld;
     private final SimpleLayerProvider provider;
     private final SquaremapGriefPrevention plugin;
 
     private boolean stop;
 
-    public SquaremapTask(SquaremapGriefPrevention plugin, MapWorld world, SimpleLayerProvider provider) {
+    public SquaremapTask(AsyncScheduler asyncScheduler, SquaremapGriefPrevention plugin, MapWorld world, SimpleLayerProvider provider) {
+        super(asyncScheduler, TimeUnit.MILLISECONDS);
         this.plugin = plugin;
         this.bukkitWorld = BukkitAdapter.bukkitWorld(world);
         this.provider = provider;
